@@ -131,8 +131,7 @@ st.markdown("<p class='sub-text'>3050 여성을 위한 프리미엄 피부 진�
 # 세션 상태 초기화 (대화 기록 저장)
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    # 첫 인사 메시지 자동 추가 안함 (시스템 프롬프트가 처리하도록 하거나, 봇이 먼저 말을 걸게 유도)
-    
+
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = None
 
@@ -144,15 +143,19 @@ if not api_key:
 # API 설정 및 모델 초기화 (한 번만 실행)
 if st.session_state.chat_session is None:
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        model_name="gemini-pro",
-        system_instruction=SYSTEM_PROMPT
-    )
-    st.session_state.chat_session = model.start_chat(history=[])
-    
-    # 봇의 첫 인사 강제 트리거 (사용자 경험 향상)
-    initial_response = st.session_state.chat_session.send_message("첫 인사를 시작해줘")
-    st.session_state.messages.append({"role": "assistant", "content": initial_response.text})
+    try:
+        model = genai.GenerativeModel(
+            model_name="gemini-pro",  # 가장 안전한 모델로 고정
+            system_instruction=SYSTEM_PROMPT
+        )
+        st.session_state.chat_session = model.start_chat(history=[])
+        
+        # 봇의 첫 인사 강제 트리거
+        initial_response = st.session_state.chat_session.send_message("첫 인사를 시작해줘")
+        st.session_state.messages.append({"role": "assistant", "content": initial_response.text})
+        
+    except Exception as e:
+        st.error(f"모델 연결 중 오류가 발생했습니다: {e}")
 
 # 채팅 기록 표시
 for message in st.session_state.messages:
@@ -178,7 +181,4 @@ if prompt := st.chat_input("답변을 입력하거나 고민을 말씀해주세�
             
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
-
             st.error("API 키를 확인하거나 잠시 후 다시 시도해주세요.")
-
-
