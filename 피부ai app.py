@@ -145,7 +145,7 @@ if not api_key:
 if st.session_state.chat_session is None:
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-pro",
+        model_name="gemini-1.5-flash",
         system_instruction=SYSTEM_PROMPT
     )
     st.session_state.chat_session = model.start_chat(history=[])
@@ -178,4 +178,5 @@ if prompt := st.chat_input("답변을 입력하거나 고민을 말씀해주세�
             
         except Exception as e:
             st.error(f"오류가 발생했습니다: {e}")
+
             st.error("API 키를 확인하거나 잠시 후 다시 시도해주세요.")
