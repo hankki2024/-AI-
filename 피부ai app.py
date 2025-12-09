@@ -145,7 +145,7 @@ if st.session_state.chat_session is None:
     genai.configure(api_key=api_key)
     try:
         model = genai.GenerativeModel(
-            model_name="gemini-pro",  # 가장 안전한 모델로 고정
+            model_name="gemini-1.5-flash",  # 최신 모델로 고정
             system_instruction=SYSTEM_PROMPT
         )
         st.session_state.chat_session = model.start_chat(history=[])
